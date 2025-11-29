@@ -1,14 +1,10 @@
 <script setup lang="ts">
 import { loadStripe } from "@stripe/stripe-js";
-import { ref, onMounted, computed } from 'vue'
+import { ref, computed } from 'vue'
 
-import SrMessages from '../components/SrMessages.vue';
-import CartCard from '../components/CartCard.vue'
-import CartCardSkeleton from '../components/CartCardSkeleton.vue'
-import { toCurrency, asoneArea, asonePath, fetchData } from '../shared/utils'
+import { asoneArea, asonePath, fetchData } from '../shared/utils'
 import { useCartStore } from '../store/cart'
 import { useProductStore } from '../store/products'
-import { i } from "vite/dist/node/types.d-aGj9QkWt";
 
 
 const cartStore = useCartStore()
@@ -30,14 +26,14 @@ let callIntent = async (cartStore: any) => {
     if (!productStore.loaded)
         return;
     if (!intentedCalled)
-        console.log('totala:', parseInt(cartStore.total) * 100);
+        console.log('totala:', parseInt(cartStore.total));
 
     const { publishableKey } = await fetch(`${window.location.origin}/${asonePath}/${asoneArea}/ws/php/public/config.php`).then((res) => res.json());
     stripe = await loadStripe(publishableKey);
 
     const { clientSecret, data, error: backendError } = await fetchData(
         `${window.location.origin}/${asonePath}/${asoneArea}/ws/php/public/createintent.php`,
-        parseInt(cartStore.total) * 100
+        parseInt(cartStore.total)
     );
     intentedCalled = true;
     console.log("Fetched data:", { clientSecret, data, backendError });
